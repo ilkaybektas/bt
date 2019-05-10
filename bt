@@ -1,0 +1,110 @@
+int motor1sag_stby = 3;
+int motor1sag_ileri = 4;
+int motor1sag_geri = 5;
+int motor1sag_pwm = 6;
+int motor2sol_ileri = 9;
+int motor2sol_geri = 8;
+int motor2sol_pwm = 10;
+int data; //bluetoothtan gelen verileri kaydetmek için
+
+void setup() {
+  pinMode(motor1sag_pwm, OUTPUT);
+  pinMode(motor1sag_ileri, OUTPUT);
+  pinMode(motor1sag_geri, OUTPUT);
+  pinMode(motor2sol_ileri, OUTPUT);
+  pinMode(motor2sol_geri, OUTPUT);
+  Serial.begin(9600);  //BT ile haberleşmek için
+}
+
+void loop() {
+  digitalWrite(motor1sag_stby, HIGH);
+
+  if (digitalRead(data) == LOW) { // veri yoksa
+    data = 'S';
+  }
+
+  if (Serial.available() > 0) // BTden veri geliyorsa
+  {
+    data = Serial.read(); // gelen veriyi data’ya aktar
+  }
+  if (data == 'S') {   //Gelen veri 'S' ise araba durur.
+    digitalWrite(motor1sag_geri, LOW);
+    digitalWrite(motor1sag_ileri, LOW);
+    analogWrite(motor1sag_pwm, 0);
+    digitalWrite(motor2sol_geri, LOW);
+    digitalWrite(motor2sol_ileri, LOW);
+    analogWrite(motor2sol_pwm, 0);
+  }
+  else if (data == 'F') {     //Gelen veri 'F' ise araba ileri gider.
+    digitalWrite(motor1sag_geri, LOW);
+    digitalWrite(motor1sag_ileri, HIGH);
+    analogWrite(motor1sag_pwm, 255);
+    digitalWrite(motor2sol_geri, LOW);
+    digitalWrite(motor2sol_ileri, HIGH);
+    analogWrite(motor2sol_pwm, 255);
+  }
+  else if (data == 'B') {  //Gelen veri 'B' ise araba geri gider.
+    digitalWrite(motor1sag_geri, HIGH);
+    digitalWrite(motor1sag_ileri, LOW);
+    analogWrite(motor1sag_pwm, 255);
+    digitalWrite(motor2sol_geri, HIGH);
+    digitalWrite(motor2sol_ileri, LOW);
+    analogWrite(motor2sol_pwm, 255);
+  }
+    else if (data == 'L') {  //Gelen veri 'L' ise araba sola gider.
+    digitalWrite(motor1sag_geri, LOW);
+    digitalWrite(motor1sag_ileri, HIGH);
+    analogWrite(motor1sag_pwm, 255);
+    digitalWrite(motor2sol_geri, LOW);
+    digitalWrite(motor2sol_ileri, HIGH);
+    analogWrite(motor2sol_pwm, 0);
+  }
+  else if (data == 'R') {  //Gelen veri 'R' ise araba sağa gider
+    digitalWrite(motor1sag_geri, LOW);
+    digitalWrite(motor1sag_ileri, HIGH);
+    analogWrite(motor1sag_pwm, 0);
+    digitalWrite(motor2sol_geri, LOW);
+    digitalWrite(motor2sol_ileri, HIGH);
+    analogWrite(motor2sol_pwm, 255);
+  }
+  else if (data == 'G') {  //Gelen veri 'G' ise araba ileri sol(çapraz) gider.
+    digitalWrite(motor1sag_geri, LOW);
+    digitalWrite(motor1sag_ileri, HIGH);
+    analogWrite(motor1sag_pwm, 255);
+    digitalWrite(motor2sol_geri, LOW);
+    digitalWrite(motor2sol_ileri, HIGH);
+    analogWrite(motor2sol_pwm, 160);
+  }
+  else if (data == 'I') {  //Gelen veri 'I' ise araba ileri sağ(çapraz) gider.
+    digitalWrite(motor1sag_geri, LOW);
+    digitalWrite(motor1sag_ileri, HIGH);
+    analogWrite(motor1sag_pwm, 160);
+    digitalWrite(motor2sol_geri, LOW);
+    digitalWrite(motor2sol_ileri, HIGH);
+    analogWrite(motor2sol_pwm, 255);
+  }
+    else if (data == 'H') {  //Gelen veri 'H' ise araba geri sol(çapraz) gider
+    digitalWrite(motor1sag_geri, HIGH);
+    digitalWrite(motor1sag_ileri, LOW);
+    analogWrite(motor1sag_pwm, 255);
+    digitalWrite(motor2sol_geri, HIGH);
+    digitalWrite(motor2sol_ileri, LOW);
+    analogWrite(motor2sol_pwm, 160);
+  }
+    else if (data == 'J') {  //Gelen veri 'J' ise araba geri sağ(çapraz) gider.
+    digitalWrite(motor1sag_geri, HIGH);
+    digitalWrite(motor1sag_ileri, LOW);
+    analogWrite(motor1sag_pwm, 160);
+    digitalWrite(motor2sol_geri, HIGH);
+    digitalWrite(motor2sol_ileri, LOW);
+    analogWrite(motor2sol_pwm, 255);
+  }
+  else {    // bunların dışında komut gelirse dur
+    digitalWrite(motor1sag_geri, LOW);
+    digitalWrite(motor1sag_ileri, LOW);
+    analogWrite(motor1sag_pwm, 0);
+    digitalWrite(motor2sol_geri, LOW);
+    digitalWrite(motor2sol_ileri, LOW);
+    analogWrite(motor2sol_pwm, 0);
+    }
+}
